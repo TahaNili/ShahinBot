@@ -1,5 +1,5 @@
 from telegram.ext import ApplicationBuilder
-from config.settings import BOT_TOKEN, FIREWORKS_API_KEY
+from config.settings import BOT_TOKEN
 from bot.commands import register_command_handlers
 from bot.message_handler import register_message_handlers
 from telegram import BotCommand
