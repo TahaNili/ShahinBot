@@ -18,7 +18,6 @@ async def set_commands(application):
 def main():
 
     # Building a robot application using tokens
-    print("✅ Token:", BOT_TOKEN)
     app = ApplicationBuilder().token(BOT_TOKEN).post_init(set_commands).build()
 
     # Register all command handlers
