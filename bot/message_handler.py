@@ -27,7 +27,7 @@ system_message = {
 # URL for LLama-3 model
 url = "https://api.fireworks.ai/inference/v1/chat/completions"
 
-async def detect_emotion(text:str) -> str:
+def detect_emotion(text:str) -> str:
     emotions = {
         "خشم": ["عصبانی", "لعنتی", "بدم میاد", "خفه شو", "برو گمشو"],
         "ناراحتی": ["غمگینم", "حالم بده", "ناراحتم", "اشک", "گریه"],
