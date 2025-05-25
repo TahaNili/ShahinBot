@@ -4,10 +4,8 @@ import json
 from telegram import Update
 from telegram.ext import MessageHandler, ContextTypes, filters, Application, CommandHandler, ContextTypes
 from datetime import datetime
-from ai_features.database import ConversationDB
 
 # Conversation memory for each chat
-ConversationDB()
 user_memory = {}
 MAX_CONTEXT_LENGTH = 5
 DEFAULT_STYLE = "friendly"
