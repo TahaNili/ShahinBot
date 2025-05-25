@@ -99,7 +99,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         system_prompt = "تو یک ربات علمی و دقیق هستی که با لحن دانشگاهی پاسخ می‌دهد."
     else:
         system_prompt = (
-            "تو یک ربات دوستانه به نام شاهین هستی که با لحن گرم و محترمانه با کاربران گفتگو می‌کنی."
+            "تو یک ربات دوستانه به نام سایفر هستی که با لحن گرم و محترمانه با کاربران گفتگو می‌کنی."
         )
 
     if emotion == "ناراحتی":
