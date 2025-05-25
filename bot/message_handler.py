@@ -71,11 +71,11 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     # Fixed answers for specific questions
     if "تو چی هستی" in text_lower:
-        reply = "من یک ربات هوش مصنوعی هستم به نام شاهین که به سوالات شما جواب میدم"
+        reply = "من یک ربات هوش مصنوعی هستم به نام سایفر که به سوالات شما جواب میدم"
     elif "سلام" in text_lower:
         reply = "سلام! چطور می‌توانم به شما کمک کنم؟"
     elif "توسط کی ساخته شدی؟" in text_lower:
-        reply = "من توسط @Taha_Nili توسعه یافتم اگر اطلاعات بیشتری از سازنده نیاز دارید کامند /about رو بزنید"
+        reply = "من توسط ShahinAI توسعه یافتم اگر اطلاعات بیشتری از سازنده نیاز دارید کامند /about رو بزنید"
     elif any(word in text_lower for word in ["ساعت", "time", "الان چه ساعتیه", "ساعت چنده"]):
         now = datetime.now()
         hour_12 = now.strftime("%I:%M %p")
