@@ -27,6 +27,20 @@ system_message = {
 # URL for LLama-3 model
 url = "https://api.fireworks.ai/inference/v1/chat/completions"
 
+async def detect_emotion(text:str) -> str:
+    emotions = {
+        "خشم": ["عصبانی", "لعنتی", "بدم میاد", "خفه شو", "برو گمشو"],
+        "ناراحتی": ["غمگینم", "حالم بده", "ناراحتم", "اشک", "گریه"],
+        "خوشحالی": ["خیلی خوشحالم", "عالیه", "خندیدم", "لذت بردم", "باحال بود"],
+        "تعجب": ["واقعا؟", "جدی؟", "باورم نمیشه", "شوخی می‌کنی؟"],
+    }
+
+    for emotion, keywords in emotions.items():
+        for word in keywords:
+            if word in text:
+                return emotion
+    return "عادی"
+
 # Function that sends the user message to the DeepSeek model
 async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
@@ -71,11 +85,13 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         today = datetime.now().strftime("%A %d %B %Y")
         await update.message.reply_text(f"📅 امروز: {today}")
         return
+     
 
     # ✳️ Save and restore conversation memory
     memory = user_memory[user_id]["messages"]
     memory.append({"role": "user", "content": prompt})
     memory = memory[-MAX_CONTEXT_LENGTH:] # Only the last 5 messages
+    emotion = detect_emotion(prompt)
 
     if style == "formal":
         system_prompt = "تو رباتی هستی که به صورت رسمی و مودبانه به سوالات پاسخ می‌دهی."
@@ -85,6 +101,15 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         system_prompt = (
             "تو یک ربات دوستانه به نام شاهین هستی که با لحن گرم و محترمانه با کاربران گفتگو می‌کنی."
         )
+
+    if emotion == "ناراحتی":
+        await update.message.reply_text("😢 بچه لوس کونی مرد که گریه نمیکنه کسکش")
+    elif emotion == "خشم":
+        await update.message.reply_text("😕 کسکش ناراحت نباش")
+    elif emotion == "خوشحالی":
+        await update.message.reply_text("😄 خوشحالی کسکش؟")
+    elif emotion == "تعجب":
+        await update.message.reply_text("😲 مانند کیر بعد جق عجیبه")
 
     system_message = {"role": "system", "content": system_prompt}
     messages = [system_message] + memory
