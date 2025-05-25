@@ -14,7 +14,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "این ربات ربات شاهین هستش که توسط @Taha_Nili توسعه یافته است | کار اصلی این ربات پاسخ دادن به سوالات کاربران و گپ زدنه در صورت نیاز اگر خواستید با سازنده ربات در ارتباط باشید حتما به این آیدی داخل تلگرام پیام بدید ID: @Taha_Nili"
+        "این ربات سایفر هستش که توسط ShahinAI ساخته شده هنوز اطلاعات درستی درباره سازندگان ربات در دسترس نیست و اطلاعاتی درمورد برند ShahinAI در اینترنت نیست. هرگونه کپی برداری از این ربات پیگرد قانونی و غیر قانونی دارد!"
     )
 
 # Command /help
