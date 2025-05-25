@@ -1,20 +1,20 @@
-# bot/message_handler.py
-
 from config.settings import FIREWORKS_API_KEY
 import requests
 import json
 from telegram import Update
 from telegram.ext import MessageHandler, ContextTypes, filters, Application, CommandHandler, ContextTypes
 from datetime import datetime
+from ai_features.database import ConversationDB
 
 # Conversation memory for each chat
+ConversationDB()
 user_memory = {}
 MAX_CONTEXT_LENGTH = 5
 DEFAULT_STYLE = "friendly"
 system_message = {
     "role": "system",
     "content": (
-        "تو یک ربات تلگرام به نام شاهین هستی که مثل یک انسان واقعی با کاربران گفتگو می‌کنی. "
+        "تو یک ربات تلگرام به نام سایفر هستی که مثل یک انسان واقعی با کاربران گفتگو می‌کنی. "
         "وظیفه تو اینه که به سوالات علمی، فنی و عمومی با دقت و دانش کافی پاسخ بدی. "
         "همیشه با لحنی مودب، آرام و دوستانه صحبت می‌کنی و از به‌کار بردن شوخی یا کلمات توهین‌آمیز خودداری می‌کنی. "
         "اگر سوالی خارج از حوزه تخصصی تو بود، محترمانه بگو که نمی‌دونی. "
