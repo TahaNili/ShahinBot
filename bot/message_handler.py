@@ -27,21 +27,39 @@ system_message = {
 # URL for LLama-3 model
 url = "https://api.fireworks.ai/inference/v1/chat/completions"
 
-def detect_emotion(text:str) -> str:
-    emotions = {
-        "خشم": ["عصبانی", "لعنتی", "بدم میاد", "خفه شو", "برو گمشو"],
-        "ناراحتی": ["غمگینم", "حالم بده", "ناراحتم", "اشک", "گریه"],
-        "خوشحالی": ["خیلی خوشحالم", "عالیه", "خندیدم", "لذت بردم", "باحال بود"],
-        "تعجب": ["واقعا؟", "جدی؟", "باورم نمیشه", "شوخی می‌کنی؟"],
+async def detect_emotion_via_llm(user_message: str) -> str:
+    prompt = (
+        f"با توجه به پیام زیر فقط یکی از احساسات را برگردان: "
+        f"شاد، غمگین، عصبانی، متعجب، عاشق، بی‌تفاوت، ترسیده، تنها. "
+        f"هیچ توضیحی نده. فقط نام احساس را به فارسی بنویس.\n\n"
+        f"پیام: «{user_message}»"
+    )
+
+    payload = {
+        "model": "accounts/fireworks/models/llama-v3p1-8b-instruct",
+        "max_tokens": 20,
+        "temperature": 0.2,
+        "top_p": 1,
+        "messages": [{"role": "user", "content": prompt}]
     }
 
-    for emotion, keywords in emotions.items():
-        for word in keywords:
-            if word in text:
-                return emotion
-    return "عادی"
+    headers = {
+        "Authorization": f"Bearer {FIREWORKS_API_KEY}",
+        "Content-Type": "application/json"
+    }
 
-# Function that sends the user message to the DeepSeek model
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        response.raise_for_status()
+        result = response.json()
+        emotion = result["choices"][0]["message"]["content"].strip().split()[0]
+        return emotion
+    except Exception as e:
+        print("🔥 Emotion detection error:", e)
+        return "نامشخص"
+
+
+# Function that sends the user message to the Llama-3 model
 async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
@@ -91,7 +109,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     memory = user_memory[user_id]["messages"]
     memory.append({"role": "user", "content": prompt})
     memory = memory[-MAX_CONTEXT_LENGTH:] # Only the last 5 messages
-    emotion = detect_emotion(prompt)
+    emotion = await detect_emotion_via_llm(prompt)
 
     if style == "formal":
         system_prompt = "تو رباتی هستی که به صورت رسمی و مودبانه به سوالات پاسخ می‌دهی."
@@ -102,19 +120,22 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             "تو یک ربات دوستانه به نام سایفر هستی که با لحن گرم و محترمانه با کاربران گفتگو می‌کنی."
         )
 
-    if emotion == "ناراحتی":
-        await update.message.reply_text("😢 بچه لوس کونی مرد که گریه نمیکنه کسکش")
+    if emotion == "غمگین":
+        await update.message.reply_text("😔 متأسفم که ناراحتی، اگه خواستی دردت رو باهام درمیون بذار 🌧️")
+    elif emotion == "شاد":
+        await update.message.reply_text("😊 چه خوب که خوشحالی! بزن بریم یه گفت‌وگوی شیرین داشته باشیم!")
     elif emotion == "خشم":
-        await update.message.reply_text("😕 کسکش ناراحت نباش")
+        await update.message.reply_text("😕 سعی کن آروم باشی، اگه چیزی ناراحتت کرده بگو شاید کمک کنم.")
     elif emotion == "خوشحالی":
-        await update.message.reply_text("😄 خوشحالی کسکش؟")
+        await update.message.reply_text("😄 خوشحالم که خوشحالی!")
     elif emotion == "تعجب":
-        await update.message.reply_text("😲 مانند کیر بعد جق عجیبه")
+        await update.message.reply_text("😲 آره دیگه، گاهی واقعیت از تخیل عجیب‌تره!")
 
     system_message = {"role": "system", "content": system_prompt}
     messages = [system_message] + memory
     
     # Send request to Llama-3
+
     payload = {
         "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
         "max_tokens": 16384,
