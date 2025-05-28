@@ -1,7 +1,8 @@
 my_telegram_bot/
 │
 ├── bot/                     ← پوشه‌ی مربوط به منطق ربات
-│   ├── __init__.py
+│   ├── __init__.py    
+|   ├── database.py  ✅ باید باشه
 │   ├── handlers.py         ← تمام handlerها اینجاست
 │   ├── commands.py         ← دستوراتی مثل /start، /help
 │   └── message_handler.py  ← مدیریت پیام‌های متنی

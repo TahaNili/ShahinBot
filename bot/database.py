@@ -42,3 +42,18 @@ def get_context(user_id, limit=10):
     conn.close()
     # Return in order from oldest to newest
     return [{"role": row[0], "content": row[1]} for row in reversed(rows)]
+
+def trim_old_messages(user_id, max_messages=20):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id FROM conversations
+        WHERE user_id = ?
+        ORDER BY id DESC
+        LIMIT -1 OFFSET ?
+    ''', (user_id, max_messages))
+    rows = cursor.fetchall()
+    for row in rows:
+        cursor.execute('DELETE FROM conversations WHERE id = ?', (row[0],))
+    conn.commit()
+    conn.close()
