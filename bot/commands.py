@@ -108,6 +108,51 @@ async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print("🔥 Translate error:", e)
         await update.message.reply_text("❗ مشکلی در ترجمه پیش آمد.")
 
+async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # Only process invite links in private chats
+    if update.message.chat.type != "private":
+        await update.message.reply_text("❗ این دستور فقط در چت خصوصی کار می‌کند.")
+        return
+
+    if not context.args:
+        await update.message.reply_text("❗ لطفاً لینک دعوت گروه را وارد کنید (مثل /join t.me/+abc123)")
+        return
+
+    invite_link = context.args[0]
+    # Regex to detect Telegram invite links (e.g., t.me/+abc123 or t.me/joinchat/abc123)
+    invite_link_pattern = r"(?:https?://)?t\.me/(?:\+|joinchat/)([A-Za-z0-9_-]+)"
+    match = re.search(invite_link_pattern, invite_link)
+
+    if not match:
+        await update.message.reply_text("❗ لطفاً یک لینک دعوت معتبر تلگرام (مثل t.me/+abc123) وارد کنید.")
+        return
+
+    invite_hash = match.group(1)
+
+    try:
+        # Join the group using the invite link
+        result = await context.bot.join_chat(invite_hash)
+        group_name = result.title if result.title else "گروه بدون نام"
+
+        # Send a confirmation message to the user
+        await update.message.reply_text(
+            f"✅ با موفقیت به گروه «{group_name}» پیوستم!\n"
+            "لطفاً من را به عنوان ادمین گروه تنظیم کنید و دسترسی‌های زیر را بدهید:\n"
+            "📩 ارسال پیام\n"
+            "📌 مدیریت پیام‌ها (در صورت نیاز)\n"
+            "برای این کار، به تنظیمات گروه بروید، من را به عنوان ادمین اضافه کنید و دسترسی‌های لازم را فعال کنید."
+        )
+
+        # Send a welcome message to the group
+        await context.bot.send_message(
+            chat_id=result.id,
+            text="سلام به همه! 😊 من سایفر هستم، ربات هوشمند شما. برای شروع، لطفاً من را به عنوان ادمین تنظیم کنید و دسترسی ارسال پیام را فعال کنید."
+        )
+
+    except Exception as e:
+        print("🔥 Join group error:", e)
+        await update.message.reply_text("❗ مشکلی در پیوستن به گروه پیش آمد. لطفاً مطمئن شوید لینک معتبر است و من اجازه پیوستن به گروه‌ها را دارم.")
+
 
 
 # Register commands in the application
@@ -118,3 +163,4 @@ def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("style", set_style))
     app.add_handler(CommandHandler("summarize", summarize))
     app.add_handler(CommandHandler("translate", translate))
+    app.add_handler(CommandHandler("join", join_command))
