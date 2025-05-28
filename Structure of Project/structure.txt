@@ -13,15 +13,3 @@ my_telegram_bot/
 ├── requirements.txt        ← لیست وابستگی‌ها برای نصب
 └── README.md               ← توضیح پروژه (اختیاری)
 
-# for ai of robot
-bot/
-├── ai_features/
-│   ├── __init__.py
-│   ├── sentiment.py      ← تحلیل احساسات
-│   ├── search.py         ← جستجوی وب
-│   ├── content_gen.py    ← تولید محتوا (مثل داستان یا کد)
-│   └── database.py       ← مدیریت دیتابیس برای حافظه مکالمه
-├── __init__.py
-├── handlers.py
-├── commands.py
-└── message_handler.py
