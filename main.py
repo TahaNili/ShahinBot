@@ -3,6 +3,7 @@ from config.settings import BOT_TOKEN
 from bot.commands import register_command_handlers
 from bot.message_handler import register_message_handlers
 from telegram import BotCommand
+from bot.database import init_db
 
 async def set_commands(application):
     commands = [
@@ -32,3 +33,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    init_db()

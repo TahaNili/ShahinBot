@@ -4,10 +4,10 @@ import json
 from telegram import Update
 from telegram.ext import MessageHandler, ContextTypes, filters, Application, CommandHandler, ContextTypes
 from datetime import datetime
+from bot.database import add_message, get_context, trim_old_messages
 
 # Conversation memory for each chat
 user_memory = {}
-MAX_CONTEXT_LENGTH = 5
 DEFAULT_STYLE = "friendly"
 system_message = {
     "role": "system",
@@ -106,9 +106,10 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
      
 
     # ✳️ Save and restore conversation memory
-    memory = user_memory[user_id]["messages"]
-    memory.append({"role": "user", "content": prompt})
-    memory = memory[-MAX_CONTEXT_LENGTH:] # Only the last 5 messages
+    add_message(user_id, "user", prompt) # Save user message
+    context_messages = get_context(user_id, limit=10) # Retrieve last context
+    trim_old_messages(user_id, max_messages=20) # Remove very old messages
+
     emotion = await detect_emotion_via_llm(prompt)
 
     if style == "formal":
@@ -132,7 +133,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text("😲 آره دیگه، گاهی واقعیت از تخیل عجیب‌تره!")
 
     system_message = {"role": "system", "content": system_prompt}
-    messages = [system_message] + memory
+    messages = [system_message] + context_messages + [{"role": "user", "content": prompt}]
     
     # Send request to Llama-3
 
@@ -161,6 +162,8 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         # Review and process the response
         result = response.json()
         reply = result["choices"][0]["message"]["content"].strip()  # extract the response text
+
+        add_message(user_id, "assistant", reply)  # Save the robot's response in the database
 
         # Remove extra text like "think"
         if "think" in reply:
