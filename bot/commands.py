@@ -1,4 +1,4 @@
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CommandHandler, ContextTypes, Application
 from config.settings import FIREWORKS_API_KEY
 import json
@@ -109,7 +109,20 @@ async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print("🔥 Translate error:", e)
         await update.message.reply_text("❗ مشکلی در ترجمه پیش آمد.")
 
+async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_chat.type != "private":
+        await update.message.reply_text("❗ این دستور فقط در چت خصوصی کار می‌کند.")
+        return
 
+    bot_username = (await context.bot.get_me()).username
+    keyboard = [
+        [InlineKeyboardButton("افزودن به گروه یا کانال", url=f"https://t.me/{bot_username}?startgroup=true")]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text(
+        "برای اضافه کردن من به گروه یا کانال، روی دکمه زیر بزن و گروه موردنظرت رو انتخاب کن:",
+        reply_markup=reply_markup
+    )
 
 # Register commands in the application
 def register_command_handlers(app: Application):
@@ -119,3 +132,4 @@ def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("style", set_style))
     app.add_handler(CommandHandler("summarize", summarize))
     app.add_handler(CommandHandler("translate", translate))
+    app.add_handler(CommandHandler("join", join_command))
