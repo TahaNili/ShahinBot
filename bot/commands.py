@@ -3,6 +3,7 @@ from telegram.ext import CommandHandler, ContextTypes, Application
 from config.settings import FIREWORKS_API_KEY
 import json
 import requests
+import re
 from bot.message_handler import url, set_style
 
 # Command /start
