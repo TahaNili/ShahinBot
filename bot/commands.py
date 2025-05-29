@@ -18,20 +18,6 @@ async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "این ربات سایفر هستش که توسط ShahinAI ساخته شده هنوز اطلاعات درستی درباره سازندگان ربات در دسترس نیست و اطلاعاتی درمورد برند ShahinAI در اینترنت نیست. هرگونه کپی برداری از این ربات پیگرد قانونی و غیر قانونی دارد!"
     )
 
-# Command /help
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        " ... \n"
-        "📚 لیست دستورات موجود:\n"
-        "/start - شروع کار با ربات\n"
-        "/help - نمایش این رهنما\n"
-        "/about - اطلاعات درباره سازنده ربات\n"
-        "/style - تغییر لحن ربات\n"
-        "/summarize - خلاصه‌سازی متن یا پیام ریپلای‌شده\n"
-        "/translate - ترجمه متن\n"
-        " ... \n"
-    )
-
 async def summarize(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Get text: either from argument or from reply
     if context.args:
@@ -127,7 +113,6 @@ async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Register commands in the application
 def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("start", start_command))
-    app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("about", about_command))
     app.add_handler(CommandHandler("style", set_style))
     app.add_handler(CommandHandler("summarize", summarize))
