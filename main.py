@@ -28,10 +28,11 @@ def main():
     # Register a text message handler
     register_message_handlers(app)
 
+    init_db()
+
     print("🤖 THE ROBOT WAS SUCESSFULLY LAUNCHED...")
 
     app.run_polling()
 
 if __name__ == '__main__':
     main()
-    init_db()
