@@ -5,6 +5,8 @@ from bot.message_handler import register_message_handlers
 from telegram import BotCommand
 from bot.database import init_db
 
+init_db()
+
 async def set_commands(application):
     commands = [
         BotCommand("start", "استارت ربات"),
@@ -27,8 +29,6 @@ def main():
 
     # Register a text message handler
     register_message_handlers(app)
-
-    init_db()
 
     print("🤖 THE ROBOT WAS SUCESSFULLY LAUNCHED...")
 
