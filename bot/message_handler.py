@@ -121,17 +121,6 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             "تو یک ربات دوستانه به نام سایفر هستی که با لحن گرم و محترمانه با کاربران گفتگو می‌کنی."
         )
 
-    if emotion == "غمگین":
-        await update.message.reply_text("😔 متأسفم که ناراحتی، اگه خواستی دردت رو باهام درمیون بذار 🌧️")
-    elif emotion == "شاد":
-        await update.message.reply_text("😊 چه خوب که خوشحالی! بزن بریم یه گفت‌وگوی شیرین داشته باشیم!")
-    elif emotion == "خشم":
-        await update.message.reply_text("😕 سعی کن آروم باشی، اگه چیزی ناراحتت کرده بگو شاید کمک کنم.")
-    elif emotion == "خوشحالی":
-        await update.message.reply_text("😄 خوشحالم که خوشحالی!")
-    elif emotion == "تعجب":
-        await update.message.reply_text("😲 آره دیگه، گاهی واقعیت از تخیل عجیب‌تره!")
-
     system_message = {"role": "system", "content": system_prompt}
     messages = [system_message] + context_messages + [{"role": "user", "content": prompt}]
     
