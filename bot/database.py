@@ -21,7 +21,7 @@ def init_db():
 def add_message(user_id, role, message):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    timestamp = datetime.utcnow().isocalendar()
+    timestamp = datetime.utcnow().isoformat()
     cursor.execute('''
         INSERT INTO conversations (user_id, role, message, timestamp)
         VALUES (?, ?, ?, ?)
