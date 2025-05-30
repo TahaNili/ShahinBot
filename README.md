@@ -1,6 +1,5 @@
 # Sypher Telegram Bot
 
-![Bot Logo (optional)](https://via.placeholder.com/150)
 
 **Sypher** is a smart and modular Telegram bot developed with **Python** and the `python-telegram-bot` library (version 20.x). This bot leverages LLaMA-3 models (via the Fireworks API) to provide advanced features such as intelligent responses, text summarization, translation, sentiment analysis, and joining Telegram groups via invite links. Sypher responds in Persian with a friendly and professional tone and is designed for use in private chats and groups.
 
@@ -65,6 +64,17 @@
 - `requirements.txt`: List of dependencies (currently needs to be created manually).
 - `README.md`: Project documentation (this file).
 - `.gitignore`: Excludes unnecessary files like `__pycache__` and `.env`.
+
+## Advanced Features (Ongoing Enhancements)
+
+### ✅ Stage 1 — Persistent Multi-Turn Memory
+User conversations are stored in a SQLite database, allowing the bot to retain context even after restarts. The bot trims old messages automatically and uses recent history when generating responses with LLaMA-3.
+
+### 🎯 Stage 2 — Intent Detection
+The bot uses LLaMA-3 to detect the user's intent behind each message (e.g., summarize, translate, ask date/time) and responds accordingly—no need for explicit commands.
+
+### 🧠 Stage 3 — Persistent Personality per User
+Each user can choose their preferred response tone (e.g., friendly, formal, academic, sarcastic), and the bot will store this setting permanently. This personality is used in all interactions.
 
 ## Support
 Unfortunately, there is currently no way to contact the bot's creators. No information about ShahinAI is available on the internet.

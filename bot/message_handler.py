@@ -4,7 +4,7 @@ import json
 from telegram import Update
 from telegram.ext import MessageHandler, ContextTypes, filters, Application, CommandHandler, ContextTypes
 from datetime import datetime
-from bot.database import add_message, get_context, trim_old_messages
+from bot.database import add_message, get_context, trim_old_messages, get_user_personality, set_user_personality
 
 # Conversation memory for each chat
 user_memory = {}
@@ -29,6 +29,43 @@ system_message = {
 # URL for LLama-3 model
 url = "https://api.fireworks.ai/inference/v1/chat/completions"
 
+async def detect_intent(text: str) -> str:
+    prompt = (
+         f"وظیفه تو اینه که هدف کاربر از پیامش رو فقط با یکی از گزینه‌های زیر مشخص کنی:\n\n"
+        f"- general_chat (برای گپ یا سوال عمومی)\n"
+        f"- translate (برای ترجمه متن)\n"
+        f"- summarize (برای خلاصه‌سازی متن)\n"
+        f"- change_style (برای تغییر لحن ربات)\n"
+        f"- ask_about_bot (برای پرسش درباره خود ربات)\n"
+        f"- ask_time (برای پرس‌وجو درباره زمان)\n"
+        f"- ask_date (برای پرس‌وجو درباره تاریخ)\n\n"
+        f"فقط یکی از این گزینه‌ها رو خروجی بده، هیچ توضیح اضافه نده.\n\n"
+        f"پیام:\n{text}"
+    )
+
+    payload = {
+        "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        "max_tokens": 10,
+        "temperature": 0,
+        "messages": [{"role": "user", "content": prompt}]
+    }
+
+    headers = {
+        "Authorization": f"Bearer {FIREWORKS_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        response.raise_for_status()
+        result = response.json()
+        intent = result["choices"][0]["message"]["content"].strip().lower()
+        return intent
+    except Exception as e:
+        print("🔥 Intent detection error:", e)
+        return "general_chat"
+
+
 async def detect_emotion_via_llm(user_message: str) -> str:
     prompt = (
         f"با توجه به پیام زیر فقط یکی از احساسات را برگردان: "
@@ -38,7 +75,7 @@ async def detect_emotion_via_llm(user_message: str) -> str:
     )
 
     payload = {
-        "model": "accounts/fireworks/models/llama-v3p1-8b-instruct",
+        "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
         "max_tokens": 20,
         "temperature": 0.2,
         "top_p": 1,
@@ -87,7 +124,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         user_memory[user_id] = {"messages": [], "style": DEFAULT_STYLE}
 
     memory = user_memory[user_id]["messages"]
-    style = user_memory[user_id]["style"]
+    style = get_user_personality(user_id)
 
     # Fixed answers for specific questions
     if "تو چی هستی" in text_lower:
@@ -113,15 +150,45 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     trim_old_messages(user_id, max_messages=20) # Remove very old messages
 
     emotion = await detect_emotion_via_llm(prompt)
+    intent = await detect_intent(prompt)
+    print(f"Intent Detected: {intent}")
 
     if style == "formal":
         system_prompt = "تو رباتی هستی که به صورت رسمی و مودبانه به سوالات پاسخ می‌دهی."
     elif style == "academic":
         system_prompt = "تو یک ربات علمی و دقیق هستی که با لحن دانشگاهی پاسخ می‌دهد."
+    elif style == "formal":
+        system_prompt = "تو رباتی هستی که به صورت رسمی و مودبانه به سوالات پاسخ می‌دهی."
+    elif style == "academic":
+        system_prompt = "تو یک ربات علمی و دقیق هستی که با لحن دانشگاهی پاسخ می‌دهد."
+    elif style == "sarcastic":
+        system_prompt = "تو یک ربات شوخ‌طبع، طعنه‌زن و رک هستی که صمیمی و گاهی خنده‌دار جواب می‌دهد."
     else:
         system_prompt = (
             "تو یک ربات دوستانه به نام سایفر هستی که با لحن گرم و محترمانه با کاربران گفتگو می‌کنی."
         )
+    if intent == "ask_time":
+        now = datetime.now().strftime("%H:%M")
+        await update.message.reply_text(f"🕒 ساعت الآن: {now}")
+        return
+    elif intent == "ask_date":
+        today = datetime.now().strftime("%A %d %B %Y")
+        await update.message.reply_text(f"📅 امروز: {today}")
+        return
+    elif intent == "ask_about_bot":
+        await update.message.reply_text("🤖 من یک ربات هوش مصنوعی هستم به نام سایفر. توسعه داده شده توسط ShahinAI.")
+        return
+    elif intent == "translate":
+        await update.message.reply_text("🔄 لطفاً از دستور /translate استفاده کن یا متن رو ریپلای کن تا برات ترجمه کنم.")
+        return
+    elif intent == "summarize":
+        await update.message.reply_text("📚 لطفاً متن رو ریپلای کن یا از دستور /summarize استفاده کن.")
+        return
+    elif intent == "change_style":
+        await update.message.reply_text("🎨 لطفاً از دستور /style friendly|formal|academic استفاده کن.")
+        return
+    elif intent == "join":
+        await update.message.reply_text("🏢 لطفا از دستور  /join(لینک گروه یا کانل) استفاده کن")
 
     system_message = {"role": "system", "content": system_prompt}
     messages = [system_message] + context_messages + [{"role": "user", "content": prompt}]
