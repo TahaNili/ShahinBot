@@ -4,4 +4,4 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-FIREWORKS_API_KEY = os.getenv("FIREWORKS_API_KEY")
+XAI_API_KEY = os.getenv("XAI_API_KEY")

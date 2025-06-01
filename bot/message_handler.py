@@ -73,7 +73,6 @@ async def detect_intent(text: str) -> str:
 
 async def detect_emotion_via_llm(user_message: str) -> str:
     text_lower = user_message.lower()
-    # روش جایگزین برای تشخیص احساسات
     if any(word in text_lower for word in ["خوشحال", "شاد", "خندیدم", "ههه"]):
         return "شاد"
     if any(word in text_lower for word in ["غمگین", "ناراحت", "گریه", "دلم گرفته"]):
@@ -185,7 +184,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         system_prompt = "تو یک ربات دوستانه به نام سایفر هستی که با لحن گرم و محترمانه با کاربران گفتگو می‌کنی."
 
     if intent == "ask_about_bot":
-        reply = "من سایفر هستم، یه دوست باسواد که توسط ShahinAI ساخته شدم! 😊 برای اطلاعات بیشتر، /about رو بزن."
+        reply = "من سایفر هستم، یه هوش مصنوعی که توسط ShahinAI ساخته شدم! 😊 برای اطلاعات بیشتر، /about رو بزن."
         set_last_action(user_id, "ask_about_bot", reply)
         await update.message.reply_text(reply)
         return
@@ -275,6 +274,3 @@ def register_message_handlers(app: Application):
 
 def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("style", set_style))
-
-
-
