@@ -108,5 +108,5 @@ No license has been specified yet. For copyright details, use `/about`.
 
 <div align="center">
   <p><em>Built with ❤️ by ShahinAI</em></p>
-  <img src="https://img.icons8.com/?size=50&id=108792&format=png&color=000000" alt="Python Logo" width="30"/>
+  <img src="https://img.icons8.com/?size=50&id=13441&format=png&color=000000" alt="Python Logo" width="30"/>
 </div>
