@@ -1,3 +1,4 @@
+
 <div align="center">
   <h1>Sypher Telegram Bot</h1>
   <p>A smart, modular Telegram bot powered by Python and LLaMA-3</p>
@@ -71,10 +72,10 @@ To configure Sypher with `@BotFather`:
 - **`bot/handlers.py`**: Placeholder for additional handlers (currently empty).
 - **`config/settings.py`**: Manages environment variables (e.g., bot token, API key).
 - **`requirements.txt`**: Lists project dependencies.
-- **`README.md`**: Project documentation (you're reading it!).
+- **`README.md`**: Project documentation (you’re reading it!).
 - **`.gitignore`**: Excludes unnecessary files like `__pycache__` and `.env`.
 
-## 🌟 Advanced Features (In Progress)
+## 🌟 Advanced Features (Staged Development)
 
 ### ✅ Stage 1: Persistent Multi-Turn Memory
 Conversations are stored in a SQLite database, enabling context retention across restarts. Old messages are automatically trimmed to maintain efficiency.
@@ -85,16 +86,27 @@ Sypher uses LLaMA-3 to detect user intent (e.g., summarize, translate, ask time)
 ### 🧠 Stage 3: Persistent Personality
 Users can set a preferred response tone (friendly, formal, academic, sarcastic), which is saved permanently for personalized interactions.
 
+### 🔄 Stage 4: Follow-up Intelligence
+The bot tracks the last action and output for each user. If a user writes “now translate it” after a summarization, Sypher uses the last response for follow-up actions.
+
+### 🌐 Stage 5: Language Detection & Auto Translation
+Sypher automatically detects the language of incoming messages and adjusts its responses accordingly. This enables seamless multilingual interaction without needing manual commands.
+
+### 🎨 Stage 6: User-Controlled Style via Message
+The bot can recognize natural language style-change requests like "Be more formal" or "Talk like a friend", and applies the new tone immediately.
+
+### 🧑‍💼 Stage 7: Per-User Behavioral Profiles
+Each user has a behavioral profile stored in the database, including tone, personality, mood, preferred language, and custom name—allowing Sypher to interact differently with each user.
+
 ## 📞 Support
-Currently, no contact information is available for the bot's creators (ShahinAI). For details, use the `/about` command in the bot.
+Currently, no contact information is available for the bot’s creator (ShahinAI). Use the `/about` command in the bot for more info.
 
 ## 📜 License
-No license has been specified yet. Run `/about` in the bot for copyright information.
+No license has been specified yet. For copyright details, use `/about`.
 
 ---
 
 <div align="center">
   <p><em>Built with ❤️ by ShahinAI</em></p>
   <img src="https://img.icons8.com/?size=50&id=108792&format=png&color=000000" alt="Python Logo" width="30"/>
-  <img src="D:\TelegramBot\img\shahinai.png" alt=ShahinAI Logo" width="30"/>
 </div>
