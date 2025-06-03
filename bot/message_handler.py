@@ -28,6 +28,32 @@ system_message = {
 # URL for LLaMA-3 model
 url = "https://api.fireworks.ai/inference/v1/chat/completions"
 
+async def detect_language(text: str) -> str:
+    prompt = f"این متن به چه زبانی نوشته شده است؟ فقط یکی از این گزینه‌ها را بدون توضیح برگردان:\n\nفارسی، انگلیسی، عربی، فرانسوی، آلمانی، اسپانیایی، روسی، چینی\n\nمتن:\n{text}"
+
+    payload = {
+        "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        "max_tokens": 5,
+        "temperature": 0,
+        "messages": [{"role": "user", "content": prompt}]
+    }
+
+    headers = {
+        "Authorization": f"Bearer {FIREWORKS_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        response.raise_for_status()
+        result = response.json()
+        language = result["choices"][0]["message"]["content"].strip()
+        return language
+    except Exception as e:
+        print("🔥 Language detection error:", e)
+        return "نامشخص"
+
+
 async def detect_intent(text: str) -> str:
     text_lower = text.lower()
     # روش جایگزین برای تشخیص نیت
@@ -163,6 +189,8 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         set_last_action(user_id, "ask_date", reply)
         await update.message.reply_text(reply)
         return
+    language = await detect_language(prompt)
+    print(f"🌐 Detected language: {language}")
 
     # ✳️ Save and restore conversation memory
     add_message(user_id, "user", prompt)  # Save user message
@@ -199,7 +227,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text("📚 لطفاً متن رو ریپلای کن یا از دستور /summarize استفاده کن.")
         return
     elif intent == "change_style":
-        await update.message.reply_text("🎨 لطفاً از دستور /style friendly|formal|academic استفاده کن.")
+        await update.message.reply_text("🎨 لطفاً از دستور /style sarcastic|formal|academic استفاده کن.")
         return
     elif intent == "join":
         await update.message.reply_text("🏢 لطفا از دستور  /join(لینک گروه یا کانل) استفاده کن")
@@ -254,12 +282,12 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
 async def set_style(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
     if not context.args:
-        await update.message.reply_text("❗ لطفاً یکی از لحن‌های زیر را مشخص کن: friendly, formal, academic")
+        await update.message.reply_text("❗ لطفاً یکی از لحن‌های زیر را مشخص کن: sarcastic, formal, academic")
         return
     
     style = context.args[0].lower()
-    if style not in ["friendly", "formal", "academic"]:
-        await update.message.reply_text("❗ لحن نامعتبر. از این موارد استفاده کن: friendly, formal, academic")
+    if style not in ["sarcastic", "formal", "academic"]:
+        await update.message.reply_text("❗ لحن نامعتبر. از این موارد استفاده کن: sarcastic, formal, academic")
         return
     
     if user_id not in user_memory:
