@@ -107,6 +107,6 @@ No license has been specified yet. For copyright details, use `/about`.
 ---
 
 <div align="center">
-  <p><em>Built with ❤️ by ShahinAI</em></p>
-  <img src="https://img.icons8.com/?size=50&id=13441&format=png&color=000000" alt="Python Logo" width="30"/>
+  <p><em>By ShahinAI</em></p>
+  <img src="https://ibb.co/G41H77sj" alt="ShahinAI Logo" width="30"/>
 </div>
