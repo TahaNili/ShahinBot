@@ -102,7 +102,7 @@ Each user has a behavioral profile stored in the database, including tone, perso
 Currently, no contact information is available for the bot’s creator (ShahinAI). Use the `/about` command in the bot for more info.
 
 ## 📜 License
-No license has been specified yet. For copyright details, use `/about`.
+Currently, this project does not have a proprietary license. No one is allowed to change or remove the project.
 
 ---
 
