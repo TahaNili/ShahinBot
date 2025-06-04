@@ -108,5 +108,5 @@ No license has been specified yet. For copyright details, use `/about`.
 
 <div align="center">
   <h1>ShahinAI</h1>
-  <img src="https://imgur.com/a/xtiCs1L" alt="ShahinAI" width="30"/>
+  <img src="https://i.imgur.com/ZiN21Dp.png" alt="ShahinAI" width="30"/>
 </div>
