@@ -214,6 +214,9 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     elif intent == "summarize":
         await update.message.reply_text("📚 لطفاً متن رو ریپلای کن یا از دستور /summarize استفاده کن.")
         return
+    elif intent == "change_style":
+        await update.message.reply_text("🎨 لطفاً از دستور /style sarcastic|formal|academic استفاده کن.")
+        return
     elif intent == "join":
         await update.message.reply_text("🏢 لطفا از دستور  /join(لینک گروه یا کانل) استفاده کن")
         return
