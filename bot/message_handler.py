@@ -138,8 +138,8 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     if not update.message or not update.message.text:
         return
 
-    bot_username = (await context.bot.get_me()).username.lower()
-    user_id = update.message.from_user.id
+    bot_username = (await context.bot.get_me()).username.lower() # type: ignore
+    user_id = update.message.from_user.id # type: ignore
     prompt = update.message.text
     text_lower = prompt.lower()
 
@@ -273,21 +273,21 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     await update.message.reply_text(reply)
 
 async def set_style(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.message.from_user.id
+    user_id = update.message.from_user.id # type: ignore
     if not context.args:
-        await update.message.reply_text("❗ لطفاً یکی از لحن‌های زیر را مشخص کن: sarcastic, formal, academic")
+        await update.message.reply_text("❗ لطفاً یکی از لحن‌های زیر را مشخص کن: sarcastic, formal, academic") # type: ignore
         return
     
     style = context.args[0].lower()
     if style not in ["sarcastic", "formal", "academic"]:
-        await update.message.reply_text("❗ لحن نامعتبر. از این موارد استفاده کن: sarcastic, formal, academic")
+        await update.message.reply_text("❗ لحن نامعتبر. از این موارد استفاده کن: sarcastic, formal, academic") # type: ignore
         return
     
     if user_id not in user_memory:
         user_memory[user_id] = {"messages": [], "style": DEFAULT_STYLE}
 
     user_memory[user_id]["style"] = style
-    await update.message.reply_text(f"✅ لحن شما به «{style}» تغییر یافت.")
+    await update.message.reply_text(f"✅ لحن شما به «{style}» تغییر یافت.") # type: ignore
 
 # Register message handler
 def register_message_handlers(app: Application):
