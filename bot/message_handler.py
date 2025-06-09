@@ -204,22 +204,6 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         system_prompt = "تو یک ربات شوخ‌طبع، طعنه‌زن و رک هستی که صمیمی و گاهی خنده‌دار جواب می‌دهد."
     else:
         system_prompt = "تو یک ربات دوستانه به نام سایفر هستی که با لحن گرم و محترمانه با کاربران گفتگو می‌کنی."
-    if intent == "translate":
-        if len(prompt.split()) < 3 and last_response:
-            prompt = last_response
-            await update.message.reply_text("🔁 ترجمه پاسخ قبلی شما:")
-        else:
-            await update.message.reply_text("🔄 لطفاً از دستور /translate استفاده کن یا متن رو ریپلای کن.")
-        return
-    elif intent == "summarize":
-        await update.message.reply_text("📚 لطفاً متن رو ریپلای کن یا از دستور /summarize استفاده کن.")
-        return
-    elif intent == "change_style":
-        await update.message.reply_text("🎨 لطفاً از دستور /style sarcastic|formal|academic استفاده کن.")
-        return
-    elif intent == "join":
-        await update.message.reply_text("🏢 لطفا از دستور  /join(لینک گروه یا کانل) استفاده کن")
-        return
 
     system_message = {"role": "system", "content": system_prompt}
     messages = [system_message] + context_messages + [{"role": "user", "content": prompt}]
