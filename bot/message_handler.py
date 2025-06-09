@@ -32,7 +32,7 @@ async def detect_language(text: str) -> str:
     prompt = f"این متن به چه زبانی نوشته شده است؟ فقط یکی از این گزینه‌ها را بدون توضیح برگردان:\n\nفارسی، انگلیسی، عربی، فرانسوی، آلمانی، اسپانیایی، روسی، چینی\n\nمتن:\n{text}"
 
     payload = {
-        "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        "model": "accounts/fireworks/models/llama4-maverick-instruct-basic",
         "max_tokens": 5,
         "temperature": 0,
         "messages": [{"role": "user", "content": prompt}]
@@ -69,14 +69,13 @@ async def detect_intent(text: str) -> str:
         f"- general_chat (برای گپ یا سوال عمومی)\n"
         f"- translate (برای ترجمه متن)\n"
         f"- summarize (برای خلاصه‌سازی متن)\n"
-        f"- change_style (برای تغییر لحن ربات)\n"
-        f"- ask_about_bot (برای پرسش درباره خود ربات)\n\n"
+        f"- change_style (برای تغییر نوع رفتاری ربات نه زبان)\n"
         f"فقط یکی از این گزینه‌ها رو خروجی بده، هیچ توضیح اضافه نده.\n\n"
         f"پیام:\n{text}"
     )
 
     payload = {
-        "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        "model": "accounts/fireworks/models/llama4-maverick-instruct-basic",
         "max_tokens": 10,
         "temperature": 0,
         "messages": [{"role": "user", "content": prompt}]
@@ -112,7 +111,7 @@ async def detect_emotion_via_llm(user_message: str) -> str:
     )
 
     payload = {
-        "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        "model": "accounts/fireworks/models/llama4-maverick-instruct-basic",
         "max_tokens": 20,
         "temperature": 0.2,
         "top_p": 1,
@@ -210,12 +209,6 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         system_prompt = "تو یک ربات شوخ‌طبع، طعنه‌زن و رک هستی که صمیمی و گاهی خنده‌دار جواب می‌دهد."
     else:
         system_prompt = "تو یک ربات دوستانه به نام سایفر هستی که با لحن گرم و محترمانه با کاربران گفتگو می‌کنی."
-
-    if intent == "ask_about_bot":
-        reply = "من سایفر هستم، یه هوش مصنوعی که توسط ShahinAI ساخته شدم! 😊 برای اطلاعات بیشتر، /about رو بزن."
-        set_last_action(user_id, "ask_about_bot", reply)
-        await update.message.reply_text(reply)
-        return
     if intent == "translate":
         if len(prompt.split()) < 3 and last_response:
             prompt = last_response
@@ -238,7 +231,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     
     # Send request to LLaMA-3
     payload = {
-        "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        "model": "accounts/fireworks/models/llama4-maverick-instruct-basic",
         "max_tokens": 16384,
         "top_p": 1,
         "top_k": 40,

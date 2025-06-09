@@ -31,7 +31,7 @@ async def summarize(update: Update, context: ContextTypes.DEFAULT_TYPE):
     prompt = f"این متن را خلاصه کن:\n\n{text}"
 
     payload = {
-        "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        "model": "accounts/fireworks/models/llama4-maverick-instruct-basic",
         "max_tokens": 500,
         "temperature": 0.5,
         "messages": [
@@ -71,7 +71,7 @@ async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Give the message to the LLaMA-3 model (like all other messages)
     payload = {
-        "model": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        "model": "accounts/fireworks/models/qwen3-235b-a22b",
         "max_tokens": 1024,
         "temperature": 0.5,
         "messages": [
