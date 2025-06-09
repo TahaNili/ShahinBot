@@ -166,11 +166,6 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         set_last_action(user_id, "ask_about_bot", reply)
         await update.message.reply_text(reply)
         return
-    if "سلام" in text_lower:
-        reply = "سلام! چطور می‌توانم به شما کمک کنم؟"
-        set_last_action(user_id, "greeting", reply)
-        await update.message.reply_text(reply)
-        return
     if any(phrase in text_lower for phrase in ["توسط کی ساخته شدی؟", "سازنده تو کیه؟", "کی تورو درست کرده؟", "چه کسی تورو ساخته؟"]):
         reply = "من توسط ShahinAI توسعه یافتم اگر اطلاعات بیشتری از سازنده نیاز دارید کامند /about رو بزنید"
         set_last_action(user_id, "ask_about_bot", reply)
