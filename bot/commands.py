@@ -110,10 +110,43 @@ async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    help_text = (
+        "\u2753 راهنمای ربات سایفر:\n"
+        "/start - شروع ربات\n"
+        "/help - نمایش راهنما و دستورات\n"
+        "/about - اطلاعات درباره ربات\n"
+        "/style [friendly|formal|academic|sarcastic] - تغییر لحن پاسخ‌دهی\n"
+        "/summarize [متن یا ریپلای] - خلاصه‌سازی متن\n"
+        "/translate [متن یا ریپلای] - ترجمه متن\n"
+        "/join - افزودن ربات به گروه یا کانال\n"
+    )
+    if update.message:
+        await update.message.reply_text(help_text)
+
+async def set_style(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message:
+        return
+    if not context.args or not context.args[0]:
+        await update.message.reply_text("\u26a0\ufe0f لطفاً یکی از سبک‌های زیر را انتخاب کن: friendly, formal, academic, sarcastic")
+        return
+    style = context.args[0].lower()
+    if style not in ["friendly", "formal", "academic", "sarcastic"]:
+        await update.message.reply_text("\u26a0\ufe0f سبک نامعتبر است. فقط یکی از این گزینه‌ها: friendly, formal, academic, sarcastic")
+        return
+    user_id = update.effective_user.id if update.effective_user else None
+    if not user_id:
+        await update.message.reply_text("خطا در شناسایی کاربر.")
+        return
+    from bot.database import set_user_personality
+    set_user_personality(user_id, style)
+    await update.message.reply_text(f"\u2705 سبک پاسخ‌دهی شما به '{style}' تغییر کرد.")
+
 # Register commands in the application
 def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("start", start_command))
     app.add_handler(CommandHandler("about", about_command))
+    app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("style", set_style))
     app.add_handler(CommandHandler("summarize", summarize))
     app.add_handler(CommandHandler("translate", translate))
