@@ -5,6 +5,8 @@ from telegram import Update
 from telegram.ext import MessageHandler, ContextTypes, filters, Application, CommandHandler, ContextTypes
 from datetime import datetime
 from bot.database import add_message, get_context, trim_old_messages, get_user_personality, set_user_personality, get_last_action, set_last_action
+from bot.intent import detect_intent  # جدا کردن تشخیص نیت به فایل intent.py
+from bot.limits import check_user_limit, increment_user_limit  # مدیریت محدودیت کاربر
 
 # Conversation memory for each chat
 user_memory = {}
@@ -266,6 +268,9 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     # Send a reply to a user on Telegram
     await update.message.reply_text(reply)
+
+    # بعد از ارسال پاسخ موفق:
+    increment_user_limit(user_id)
 
 async def set_style(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id # type: ignore
