@@ -5,6 +5,7 @@ from telegram import Update
 from telegram.ext import MessageHandler, ContextTypes, filters, Application, CommandHandler, ContextTypes
 from datetime import datetime
 from bot.database import add_message, get_context, trim_old_messages, get_user_personality, set_user_personality, get_last_action, set_last_action
+import aiohttp
 
 # Conversation memory for each chat
 user_memory = {}
@@ -29,7 +30,6 @@ system_message = {
 url = "https://api.fireworks.ai/inference/v1/chat/completions"
 
 async def detect_language(text: str) -> str:
-    import aiohttp
     prompt = f"این متن به چه زبانی نوشته شده است؟ فقط یکی از این گزینه‌ها را بدون توضیح برگردان:\n\nفارسی، انگلیسی، عربی، فرانسوی، آلمانی، اسپانیایی، روسی، چینی\n\nمتن:\n{text}"
     payload = {
         "model": "accounts/fireworks/models/llama4-maverick-instruct-basic",
@@ -52,7 +52,6 @@ async def detect_language(text: str) -> str:
 
 
 async def detect_intent(text: str) -> str:
-    import aiohttp
     text_lower = text.lower()
     if any(word in text_lower for word in ["ساعت", "time", "الان چه ساعتیه", "ساعت چنده"]):
         return "time"
@@ -90,7 +89,6 @@ async def detect_intent(text: str) -> str:
 
 
 async def detect_emotion_via_llm(user_message: str) -> str:
-    import aiohttp
     text_lower = user_message.lower()
     if any(word in text_lower for word in ["خوشحال", "شاد", "خندیدم", "ههه"]):
         return "شاد"
@@ -180,7 +178,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     print(f"Intent Detected: {intent}")
     last_action, last_response = get_last_action(user_id)
 
-    # پاسخ‌دهی بر اساس سبک
+    # Responding by style
     if style == "formal":
         system_prompt = "تو باید با لحنی رسمی و مودبانه پاسخ بدهی."
     elif style == "academic":
@@ -190,7 +188,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     else:
         system_prompt = system_message["content"]
 
-    # اجرای دستورات خاص بر اساس intent
+    # Execute specific commands based on intent
     chat_id = chat.id if chat else None
     if intent == "translate":
         if chat_id:
@@ -209,7 +207,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             await context.bot.send_message(chat_id=chat_id, text="برای افزودن من به گروه یا کانال از دستور /join استفاده کن.")
         return
 
-    # آماده‌سازی پیام برای مدل
+    # Preparing the message for the model
     system_msg = {"role": "system", "content": system_prompt}
     messages = [system_msg] + context_messages + [{"role": "user", "content": prompt}]
 
