@@ -9,12 +9,12 @@ from bot.message_handler import url, set_style
 # Command /start
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-    await update.message.reply_text(
-        f"سلام کاربر {user.first_name} خوش آمدی"
+    await update.message.reply_text( # type: ignore
+        f"سلام کاربر {user.first_name} خوش آمدی" # type: ignore
     )
 
 async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
+    await update.message.reply_text( # type: ignore
         "این ربات سایفر هستش که توسط ShahinAI ساخته شده هنوز اطلاعات درستی درباره سازندگان ربات در دسترس نیست و اطلاعاتی درمورد برند ShahinAI در اینترنت نیست. هرگونه کپی برداری از این ربات پیگرد قانونی و غیر قانونی دارد!"
     )
 
@@ -22,10 +22,10 @@ async def summarize(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Get text: either from argument or from reply
     if context.args:
         text = " ".join(context.args)
-    elif update.message.reply_to_message and update.message.reply_to_message.text:
-        text = update.message.reply_to_message.text
+    elif update.message.reply_to_message and update.message.reply_to_message.text: # type: ignore
+        text = update.message.reply_to_message.text # type: ignore
     else:
-        await update.message.reply_text("❗ لطفاً متنی را برای خلاصه‌سازی ارسال یا ریپلای کن.")
+        await update.message.reply_text("❗ لطفاً متنی را برای خلاصه‌سازی ارسال یا ریپلای کن.") # type: ignore
         return
 
     prompt = f"این متن را خلاصه کن:\n\n{text}"
@@ -55,15 +55,15 @@ async def summarize(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply = "❗ مشکلی در خلاصه‌سازی پیش اومد."
         print("🔥 summarize error:", e)
 
-    await update.message.reply_text(reply)
+    await update.message.reply_text(reply) # type: ignore
 
 async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.args:
         text = " ".join(context.args)
-    elif update.message.reply_to_message and update.message.reply_to_message.text:
-        text = update.message.reply_to_message.text
+    elif update.message.reply_to_message and update.message.reply_to_message.text: # type: ignore
+        text = update.message.reply_to_message.text # type: ignore
     else:
-        await update.message.reply_text("❗ لطفاً متنی برای ترجمه بنویس یا روی پیام ریپلای کن.")
+        await update.message.reply_text("❗ لطفاً متنی برای ترجمه بنویس یا روی پیام ریپلای کن.") # type: ignore
         return
 
     # Give clear instructions for translation
@@ -90,14 +90,14 @@ async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         res.raise_for_status()
         result = res.json()
         translation = result["choices"][0]["message"]["content"].strip()
-        await update.message.reply_text(f"🌍 ترجمه:\n{translation}")
+        await update.message.reply_text(f"🌍 ترجمه:\n{translation}") # type: ignore
     except Exception as e:
         print("🔥 Translate error:", e)
-        await update.message.reply_text("❗ مشکلی در ترجمه پیش آمد.")
+        await update.message.reply_text("❗ مشکلی در ترجمه پیش آمد.") # type: ignore
 
 async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type != "private":
-        await update.message.reply_text("❗ این دستور فقط در چت خصوصی کار می‌کند.")
+    if update.effective_chat.type != "private": # type: ignore
+        await update.message.reply_text("❗ این دستور فقط در چت خصوصی کار می‌کند.") # type: ignore
         return
 
     bot_username = (await context.bot.get_me()).username
@@ -105,7 +105,7 @@ async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("افزودن به گروه یا کانال", url=f"https://t.me/{bot_username}?startgroup=true")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
+    await update.message.reply_text( # type: ignore
         "برای اضافه کردن من به گروه یا کانال، روی دکمه زیر بزن و گروه موردنظرت رو انتخاب کن:",
         reply_markup=reply_markup
     )
