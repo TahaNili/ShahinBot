@@ -9,7 +9,7 @@
 Sypher is an intelligent and modular Telegram bot built with Python and the python-telegram-bot library (v22.1). It leverages the LLaMA-4 model via the Fireworks API to deliver advanced features like intelligent responses, text summarization, translation, sentiment analysis, and group joining. Sypher communicates in Persian with a friendly, professional tone, perfect for both private chats and groups.
 
 ## ✨ Features
-- **Intelligent Responses**: Answers scientific, technical, and general questions using LLaMA-3.
+- **Intelligent Responses**: Answers scientific, technical, and general questions using LLaMA-4.
 - **Commands**:
   - `/start`: Welcome message
   - `/help`: List all commands
