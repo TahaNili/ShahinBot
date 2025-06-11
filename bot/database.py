@@ -25,6 +25,17 @@ def init_db():
                     last_response TEXT
                 )
             ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS user_agents (
+                    user_id TEXT PRIMARY KEY,
+                    personality TEXT DEFAULT 'friendly',
+                    memory TEXT,
+                    goals TEXT,
+                    preferences TEXT,
+                    last_active TEXT,
+                    custom_name TEXT
+                )
+            ''')
             conn.commit()
     except sqlite3.Error as e:
         print(f"Database error in init_db: {e}")
@@ -122,3 +133,44 @@ def get_last_action(user_id):
     except sqlite3.Error as e:
         print(f"Database error in get_last_action: {e}")
         return (None, None)
+
+def set_user_agent(user_id, personality=None, memory=None, goals=None, preferences=None, last_active=None, custom_name=None):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO user_agents (user_id, personality, memory, goals, preferences, last_active, custom_name)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(user_id) DO UPDATE SET
+                    personality=COALESCE(excluded.personality, user_agents.personality),
+                    memory=COALESCE(excluded.memory, user_agents.memory),
+                    goals=COALESCE(excluded.goals, user_agents.goals),
+                    preferences=COALESCE(excluded.preferences, user_agents.preferences),
+                    last_active=COALESCE(excluded.last_active, user_agents.last_active),
+                    custom_name=COALESCE(excluded.custom_name, user_agents.custom_name)
+            ''', (user_id, personality, memory, goals, preferences, last_active, custom_name))
+            conn.commit()
+    except sqlite3.Error as e:
+        print(f"Database error in set_user_agent: {e}")
+
+def get_user_agent(user_id):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM user_agents WHERE user_id = ?', (user_id,))
+            row = cursor.fetchone()
+        if row:
+            return {
+                'user_id': row[0],
+                'personality': row[1],
+                'memory': row[2],
+                'goals': row[3],
+                'preferences': row[4],
+                'last_active': row[5],
+                'custom_name': row[6]
+            }
+        else:
+            return None
+    except sqlite3.Error as e:
+        print(f"Database error in get_user_agent: {e}")
+        return None
