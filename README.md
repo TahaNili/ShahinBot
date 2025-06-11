@@ -18,6 +18,10 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
   - `/summarize`: Summarize provided or replied text
   - `/translate`: Translate text
   - `/join`: Join groups via invite link
+  - `/setgoal`: Set your personal goal (per-user agent)
+  - `/getgoal`: Show your current goal
+  - `/setpref`: Set your preferences (per-user agent)
+  - `/getpref`: Show your current preferences
 - **Sentiment Analysis**: Detects emotions and responds empathetically
 - **Conversation Memory**: Maintains context using SQLite
 - **Group Support**: Joins groups and responds to mentions/replies
@@ -36,6 +40,10 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
 - `/summarize <text>` — Summarize text
 - `/translate <text>` — Translate text
 - `/join <invite link>` — Add bot to group
+- `/setgoal <your goal>` — Set your personal goal
+- `/getgoal` — Show your current goal
+- `/setpref <your preferences>` — Set your preferences
+- `/getpref` — Show your current preferences
 - Mention `@Sypher` in a group to interact
 
 ## 📂 Project Structure
@@ -58,6 +66,7 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
 - **Per-User Behavioral Profiles**: Stores tone, mood, language, and custom name
 
 ## 🆕 Changelog
+- 2025-06-12: Added per-user goal and preference commands (/setgoal, /getgoal, /setpref, /getpref) to Personal AI Agent system; updated help and command list
 - 2025-06-10: Major bug fixes, /help and /style commands improved, intent and language detection logic refactored, README.md restructured
 
 ## 📞 Support
