@@ -5,6 +5,7 @@ import json
 import requests
 import re
 from bot.message_handler import url, set_style
+from bot.database import set_user_personality, set_user_agent, get_user_goal, get_user_pref
 
 # Command /start
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -110,6 +111,56 @@ async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
+async def setgoal_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message:
+        return
+    user_id = update.effective_user.id if update.effective_user else None
+    if not user_id:
+        return
+    if not context.args:
+        await update.message.reply_text("لطفاً هدف خود را بعد از دستور وارد کنید.")
+        return
+    goal_text = " ".join(context.args)
+    set_user_agent(user_id, goals=goal_text)
+    await update.message.reply_text("✅ هدف شما ثبت شد.")
+
+async def getgoal_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message:
+        return
+    user_id = update.effective_user.id if update.effective_user else None
+    if not user_id:
+        return
+    goal = get_user_goal(user_id)
+    if goal:
+        await update.message.reply_text(f"🎯 هدف فعلی شما: {goal}")
+    else:
+        await update.message.reply_text("شما هنوز هدفی ثبت نکرده‌اید.")
+
+async def setpref_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message:
+        return
+    user_id = update.effective_user.id if update.effective_user else None
+    if not user_id:
+        return
+    if not context.args:
+        await update.message.reply_text("لطفاً ترجیحات خود را بعد از دستور وارد کنید.")
+        return
+    pref_text = " ".join(context.args)
+    set_user_agent(user_id, preferences=pref_text)
+    await update.message.reply_text("✅ ترجیحات شما ثبت شد.")
+
+async def getpref_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message:
+        return
+    user_id = update.effective_user.id if update.effective_user else None
+    if not user_id:
+        return
+    pref = get_user_pref(user_id)
+    if pref:
+        await update.message.reply_text(f"⚙️ ترجیحات فعلی شما: {pref}")
+    else:
+        await update.message.reply_text("شما هنوز ترجیحاتی ثبت نکرده‌اید.")
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "\u2753 راهنمای ربات سایفر:\n"
@@ -120,6 +171,10 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/summarize [متن یا ریپلای] - خلاصه‌سازی متن\n"
         "/translate [متن یا ریپلای] - ترجمه متن\n"
         "/join - افزودن ربات به گروه یا کانال\n"
+        "/setgoal [هدف] - ثبت هدف شخصی\n"
+        "/getgoal - نمایش هدف فعلی\n"
+        "/setpref [ترجیحات] - ثبت ترجیحات شخصی\n"
+        "/getpref - نمایش ترجیحات فعلی\n"
     )
     if update.message:
         await update.message.reply_text(help_text)
@@ -138,7 +193,6 @@ async def set_style(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not user_id:
         await update.message.reply_text("خطا در شناسایی کاربر.")
         return
-    from bot.database import set_user_personality
     set_user_personality(user_id, style)
     await update.message.reply_text(f"\u2705 سبک پاسخ‌دهی شما به '{style}' تغییر کرد.")
 
@@ -151,3 +205,7 @@ def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("summarize", summarize))
     app.add_handler(CommandHandler("translate", translate))
     app.add_handler(CommandHandler("join", join_command))
+    app.add_handler(CommandHandler("setgoal", setgoal_command))
+    app.add_handler(CommandHandler("getgoal", getgoal_command))
+    app.add_handler(CommandHandler("setpref", setpref_command))
+    app.add_handler(CommandHandler("getpref", getpref_command))

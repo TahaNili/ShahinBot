@@ -15,7 +15,11 @@ async def set_commands(application):
         BotCommand("summarize", "خلاصه‌سازی متن یا پیام ریپلای‌شده"),
         BotCommand("about", "اطلاعات درباره ربات"),
         BotCommand("help", "راهنمای استفاده از ربات"),
-        BotCommand("join", "برای افزودن به کانال یا گروه")
+        BotCommand("join", "برای افزودن به کانال یا گروه"),
+        BotCommand("setgoal", "ثبت هدف شخصی"),
+        BotCommand("getgoal", "نمایش هدف فعلی"),
+        BotCommand("setpref", "ثبت ترجیحات شخصی"),
+        BotCommand("getpref", "نمایش ترجیحات فعلی")
     ]
     await application.bot.set_my_commands(commands)
 
