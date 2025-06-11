@@ -15,7 +15,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text( # type: ignore
-        "این ربات سایفر هستش که توسط ShahinAI ساخته شده هنوز اطلاعات درستی درباره سازندگان ربات در دسترس نیست و اطلاعاتی درمورد برند ShahinAI در اینترنت نیست. هرگونه کپی برداری از این ربات پیگرد قانونی و غیر قانونی دارد!"
+        "ربات سایفر توسط ShahinAI ساخته شده است برای اینکه اطلاعات بیشتری درباره ربات به دست بیاورید حتما به ریپازیتوری گیت هاب ما مراجعه کنید: https://github.com/TahaNili/Sypher.Bot.git | ضمنا هرگونه کپی برداری از این ربات از نظر شرعی و قانونی جایز نیست.! \n\n"
     )
 
 async def summarize(update: Update, context: ContextTypes.DEFAULT_TYPE):
