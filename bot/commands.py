@@ -1,11 +1,12 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CommandHandler, ContextTypes, Application
-from config.settings import FIREWORKS_API_KEY
+from config.settings import FIREWORKS_API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 import json
 import requests
 import re
 from bot.message_handler import url, set_style
 from bot.database import set_user_personality, set_user_agent, get_user_goal, get_user_pref
+from bot.integrations.google_calendar import get_authorization_url, exchange_code_for_token
 
 # Command /start
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -196,6 +197,39 @@ async def set_style(update: Update, context: ContextTypes.DEFAULT_TYPE):
     set_user_personality(user_id, style)
     await update.message.reply_text(f"\u2705 سبک پاسخ‌دهی شما به '{style}' تغییر کرد.")
 
+async def connect_google_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message:
+        return
+    # اگر client_id و client_secret تنظیم نشده باشد، پیام راهنما بده
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        help_text = (
+            "برای اتصال به Google Calendar باید یک Google Cloud Project بسازید و OAuth credentials دریافت کنید.\n"
+            "۱. به این لینک بروید: https://console.cloud.google.com/apis/credentials\n"
+            "۲. یک OAuth 2.0 Client ID بسازید (نوع: Desktop یا Web Application).\n"
+            "۳. client_id و client_secret را در فایل settings.py قرار دهید.\n"
+            "۴. پس از آماده شدن، این دستور را دوباره اجرا کنید.\n\n"
+            "(در نسخه‌های بعدی، لینک احراز هویت برای شما ارسال خواهد شد.)"
+        )
+        await update.message.reply_text(help_text)
+        return
+    # اگر کاربر کد را ارسال کرده باشد (در context.args)
+    if context.args:
+        code = context.args[0]
+        redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
+        try:
+            token_data = exchange_code_for_token(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, code, redirect_uri)
+            if token_data:
+                await update.message.reply_text("✅ اتصال به Google Calendar با موفقیت انجام شد! (توکن دریافت شد)")
+            else:
+                await update.message.reply_text("❌ دریافت توکن ناموفق بود. لطفاً دوباره تلاش کنید.")
+        except Exception as e:
+            await update.message.reply_text(f"خطا در دریافت توکن: {e}")
+        return
+    # تولید لینک احراز هویت و ارسال به کاربر
+    redirect_uri = "urn:ietf:wg:oauth:2.0:oob"  # حالت دسکتاپ (آسان‌ترین حالت تست)
+    auth_url = get_authorization_url(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, redirect_uri)
+    await update.message.reply_text(f"برای اتصال به Google Calendar روی لینک زیر کلیک کنید و کد دریافتی را اینجا ارسال کنید:\nمثال: /connect_google <کد>\n\n{auth_url}")
+
 # Register commands in the application
 def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("start", start_command))
@@ -209,3 +243,4 @@ def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("getgoal", getgoal_command))
     app.add_handler(CommandHandler("setpref", setpref_command))
     app.add_handler(CommandHandler("getpref", getpref_command))
+    app.add_handler(CommandHandler("connect_google", connect_google_command))
