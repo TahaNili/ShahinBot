@@ -174,6 +174,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/getgoal - نمایش هدف فعلی\n"
         "/setpref [ترجیحات] - ثبت ترجیحات شخصی\n"
         "/getpref - نمایش ترجیحات فعلی\n"
+        "/history - نمایش ۱۰ پیام آخر شما\n"
     )
     if update.message:
         await update.message.reply_text(help_text)
