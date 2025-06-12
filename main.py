@@ -20,7 +20,7 @@ async def set_commands(application):
         BotCommand("getgoal", "نمایش هدف فعلی"),
         BotCommand("setpref", "ثبت ترجیحات شخصی"),
         BotCommand("getpref", "نمایش ترجیحات فعلی"),
-        BotCommand("connect_google", "اتصال به Google Calendar (در حال توسعه)")
+        BotCommand("history", "نمایش ۱۰ پیام آخر شما")
     ]
     await application.bot.set_my_commands(commands)
 

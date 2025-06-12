@@ -125,13 +125,15 @@ async def detect_emotion_via_llm(user_message: str) -> str:
 async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
-
-    bot_username = (await context.bot.get_me()).username.lower() # type: ignore
-    user_id = update.message.from_user.id if update.message.from_user else None # type: ignore
+    user_id = update.message.from_user.id if update.message.from_user else None
     if not user_id:
         return
-    prompt = update.message.text
-    text_lower = prompt.lower()
+    user_message = update.message.text
+    # ذخیره پیام کاربر
+    add_message(user_id, "user", user_message)
+
+    bot_username = (await context.bot.get_me()).username.lower() # type: ignore
+    text_lower = user_message.lower()
 
     # Response condition: Only if it was a mention or reply
     should_respond = False
@@ -166,16 +168,16 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text(f"📅 تاریخ امروز: {today}")
         return
 
-    language = await detect_language(prompt)
+    language = await detect_language(user_message)
     print(f"🌐 Detected language: {language}")
 
     # ✳️ Save and restore conversation memory
-    add_message(user_id, "user", prompt)  # Save user message
+    add_message(user_id, "user", user_message)  # Save user message
     context_messages = get_context(user_id, limit=10)  # Retrieve last context
     trim_old_messages(user_id, max_messages=20)  # Remove very old messages
 
-    emotion = await detect_emotion_via_llm(prompt)
-    intent = await detect_intent(prompt)
+    emotion = await detect_emotion_via_llm(user_message)
+    intent = await detect_intent(user_message)
     print(f"Intent Detected: {intent}")
     last_action, last_response = get_last_action(user_id)
 
@@ -210,7 +212,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     # Preparing the message for the model
     system_msg = {"role": "system", "content": system_prompt}
-    messages = [system_msg] + context_messages + [{"role": "user", "content": prompt}]
+    messages = [system_msg] + context_messages + [{"role": "user", "content": user_message}]
 
     import aiohttp
     payload = {

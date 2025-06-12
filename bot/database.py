@@ -1,6 +1,6 @@
+from datetime import datetime
 import sqlite3
 import os
-from datetime import datetime
 
 DB_PATH = os.getenv("DB_PATH", "memory.db")
 
@@ -25,22 +25,11 @@ def init_db():
                     last_response TEXT
                 )
             ''')
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS user_agents (
-                    user_id TEXT PRIMARY KEY,
-                    personality TEXT DEFAULT 'friendly',
-                    memory TEXT,
-                    goals TEXT,
-                    preferences TEXT,
-                    last_active TEXT,
-                    custom_name TEXT
-                )
-            ''')
-            conn.commit()
     except sqlite3.Error as e:
         print(f"Database error in init_db: {e}")
 
 def add_message(user_id, role, message):
+    """ذخیره یک پیام جدید در دیتابیس (user_id, نقش، متن، زمان)"""
     try:
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
@@ -48,12 +37,13 @@ def add_message(user_id, role, message):
             cursor.execute('''
                 INSERT INTO conversations (user_id, role, message, timestamp)
                 VALUES (?, ?, ?, ?)
-            ''', (user_id, role, message, timestamp))
+            ''', (str(user_id), role, message, timestamp))
             conn.commit()
     except sqlite3.Error as e:
         print(f"Database error in add_message: {e}")
 
 def get_context(user_id, limit=10):
+    """بازیابی آخرین پیام‌های کاربر (user_id) به تعداد limit"""
     try:
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
@@ -62,7 +52,7 @@ def get_context(user_id, limit=10):
                 WHERE user_id = ?
                 ORDER BY id DESC
                 LIMIT ?
-            ''', (user_id, limit))
+            ''', (str(user_id), limit))
             rows = cursor.fetchall()
         return [{"role": row[0], "content": row[1]} for row in reversed(rows)]
     except sqlite3.Error as e:
@@ -197,4 +187,28 @@ def get_user_pref(user_id):
         return row[0] if row else None
     except sqlite3.Error as e:
         print(f"Database error in get_user_pref: {e}")
+        return None
+
+def set_user_google_token(user_id, token_json):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO user_agents (user_id, memory)
+                VALUES (?, ?)
+                ON CONFLICT(user_id) DO UPDATE SET memory=excluded.memory
+            ''', (user_id, token_json))
+            conn.commit()
+    except sqlite3.Error as e:
+        print(f"Database error in set_user_google_token: {e}")
+
+def get_user_google_token(user_id):
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT memory FROM user_agents WHERE user_id = ?', (user_id,))
+            row = cursor.fetchone()
+        return row[0] if row else None
+    except sqlite3.Error as e:
+        print(f"Database error in get_user_google_token: {e}")
         return None

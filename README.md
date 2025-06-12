@@ -10,6 +10,7 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
 
 ## ✨ Features
 - **Intelligent Responses**: Answers scientific, technical, and general questions using LLaMA-4.
+- **Conversation Memory**: Stores and retrieves the last messages of each user for context-aware and personalized responses. View your recent chat history with `/history`.
 - **Commands**:
   - `/start`: Welcome message
   - `/help`: List all commands
@@ -22,10 +23,8 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
   - `/getgoal`: Show your current goal
   - `/setpref`: Set your preferences (per-user agent)
   - `/getpref`: Show your current preferences
-  - `/connect_google`: Connect your Google Calendar (OAuth, in development)
-- **Google Calendar Integration**: Connect your Google account, get an OAuth link, and receive a token for future calendar access (in development)
+  - `/history`: Show your last 10 messages (conversation memory)
 - **Sentiment Analysis**: Detects emotions and responds empathetically
-- **Conversation Memory**: Maintains context using SQLite
 - **Group Support**: Joins groups and responds to mentions/replies
 - **Modular Design**: Clean, organized, and extensible
 
@@ -46,9 +45,7 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
 - `/getgoal` — Show your current goal
 - `/setpref <your preferences>` — Set your preferences
 - `/getpref` — Show your current preferences
-- `/connect_google` — Connect your Google Calendar (in development)
-- `/connect_google` — Get an OAuth link to connect your Google Calendar
-- `/connect_google <code>` — Exchange the received code for a token (in development)
+- `/history` — Show your last 10 messages (conversation memory)
 - Mention `@Sypher` in a group to interact
 
 ## 📂 Project Structure
@@ -56,15 +53,13 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
 - `bot/commands.py`: Command handlers
 - `bot/message_handler.py`: Text, sentiment, and LLM logic
 - `bot/database.py`: SQLite conversation and profile storage
-- `bot/integrations/google_calendar.py`: Google Calendar integration (in development)
 - `config/settings.py`: Environment variables
 - `requirements.txt`: Dependencies
 - `README.md`: Documentation
 - `.gitignore`: Ignore files
 
 ## 🆕 Changelog
-- 2025-06-12: Google Calendar OAuth: generate auth link, receive code, exchange for token (in development)
-- 2025-06-12: Added Google Calendar integration structure and /connect_google command (in development)
+- 2025-06-12: Implemented conversation memory and /history command for viewing recent chat history
 - 2025-06-12: Added per-user goal and preference commands (/setgoal, /getgoal, /setpref, /getpref) to Personal AI Agent system; updated help and command list
 - 2025-06-10: Major bug fixes, /help and /style commands improved, intent and language detection logic refactored, README.md restructured
 
