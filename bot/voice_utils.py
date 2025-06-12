@@ -34,7 +34,7 @@ def ogg_to_wav(ogg_path):
     :return: Path to WAV file
     """
     wav_path = ogg_path + ".wav"
-    ffmpeg_path = r"d:\\TelegramBot\\ffmpeg\\ffmpeg-2025-06-11-git-f019dd69f0-essentials_build\bin\\ffmpeg.exe"
+    ffmpeg_path = r"D:\ffmpeg\ffmpeg-2025-06-11-git-f019dd69f0-essentials_build\bin\ffmpeg.exe"
     # Check if ffmpeg.exe exists
     if not os.path.isfile(ffmpeg_path):
         raise RuntimeError(f"ffmpeg.exe not found at: {ffmpeg_path}")
