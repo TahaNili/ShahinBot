@@ -2,7 +2,7 @@ import os
 import tempfile
 import whisper
 from gtts import gTTS
-from pydub import AudioSegment
+import subprocess
 
 def speech_to_text(audio_path, model_size="base"):
     """
@@ -33,7 +33,21 @@ def ogg_to_wav(ogg_path):
     :param ogg_path: Path to OGG file
     :return: Path to WAV file
     """
-    sound = AudioSegment.from_file(ogg_path)
     wav_path = ogg_path + ".wav"
-    sound.export(wav_path, format="wav")
+    ffmpeg_path = r"d:\\TelegramBot\\ffmpeg\\ffmpeg-2025-06-11-git-f019dd69f0-essentials_build\bin\\ffmpeg.exe"
+    # Check if ffmpeg.exe exists
+    if not os.path.isfile(ffmpeg_path):
+        raise RuntimeError(f"ffmpeg.exe not found at: {ffmpeg_path}")
+    # Check if ogg file exists
+    if not os.path.isfile(ogg_path):
+        raise RuntimeError(f"OGG file not found: {ogg_path}")
+    command = [
+        ffmpeg_path, "-y", "-i", ogg_path, wav_path
+    ]
+    try:
+        subprocess.run(command, check=True, capture_output=True)
+    except Exception as e:
+        raise RuntimeError(f"ffmpeg error: {e}")
+    if not os.path.isfile(wav_path):
+        raise RuntimeError(f"WAV file was not created: {wav_path}")
     return wav_path
