@@ -29,13 +29,6 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
 - **Group Support**: Joins groups and responds to mentions/replies
 - **Modular Design**: Clean, organized, and extensible
 
-## 🚀 Quick Start
-1. Configure your bot with @BotFather (enable groups, disable privacy, set commands)
-2. Add your API keys in `config/settings.py`
-3. Install dependencies: `pip install -r requirements.txt`
-   - For voice features, also install: `pip install git+https://github.com/openai/whisper.git gtts pydub`
-4. Run: `python main.py`
-
 ## 📝 Example Usage
 - `/start` — Start the bot
 - `/help` — Show help
