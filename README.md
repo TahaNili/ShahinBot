@@ -29,12 +29,6 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
 - **Group Support**: Joins groups and responds to mentions/replies
 - **Modular Design**: Clean, organized, and extensible
 
-## 🗣️ Voice Message Usage
-- Simply send a voice message (voice note) to the bot in private chat or group (with mention).
-- The bot will transcribe your voice, generate an intelligent reply, and send the answer as a voice message back to you.
-- Voice recognition is powered by Whisper (open-source, supports Persian and English). Voice reply is generated using gTTS.
-- If the bot cannot recognize your voice, it will send a text error message.
-
 ## 🚀 Quick Start
 1. Configure your bot with @BotFather (enable groups, disable privacy, set commands)
 2. Add your API keys in `config/settings.py`
@@ -68,7 +62,6 @@ Sypher is an intelligent and modular Telegram bot built with Python and the pyth
 - `.gitignore`: Ignore files
 
 ## 🆕 Changelog
-- 2025-06-12: Added voice message support: send a voice, get an AI-powered voice reply (Whisper + gTTS)
 - 2025-06-12: Implemented conversation memory and /history command for viewing recent chat history
 - 2025-06-12: Added per-user goal and preference commands (/setgoal, /getgoal, /setpref, /getpref) to Personal AI Agent system; updated help and command list
 - 2025-06-10: Major bug fixes, /help and /style commands improved, intent and language detection logic refactored, README.md restructured
