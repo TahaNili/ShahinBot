@@ -20,7 +20,8 @@ async def set_commands(application):
         BotCommand("getgoal", "نمایش هدف فعلی"),
         BotCommand("setpref", "ثبت ترجیحات شخصی"),
         BotCommand("getpref", "نمایش ترجیحات فعلی"),
-        BotCommand("history", "نمایش ۱۰ پیام آخر شما")
+        BotCommand("history", "نمایش ۱۰ پیام آخر شما"),
+        BotCommand("news", "دریافت اخبار روز دنیا")
     ]
     await application.bot.set_my_commands(commands)
 

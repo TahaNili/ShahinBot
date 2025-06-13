@@ -175,6 +175,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/setpref [ترجیحات] - ثبت ترجیحات شخصی\n"
         "/getpref - نمایش ترجیحات فعلی\n"
         "/history - نمایش ۱۰ پیام آخر شما\n"
+        "/news - نمایش آخرین اخبار جهان\n"
     )
     if update.message:
         await update.message.reply_text(help_text)
@@ -213,6 +214,29 @@ async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(f"🕑 ۱۰ پیام آخر شما:\n\n{text}") # type: ignore
 
+async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Send latest world news headlines to the user."""
+    NEWS_API_KEY = "demo"  # Replace with your NewsAPI key for production
+    url = f"https://newsapi.org/v2/top-headlines?language=en&pageSize=5&apiKey={NEWS_API_KEY}"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if data.get("status") != "ok":
+            await update.message.reply_text("❗️Could not fetch news. Try again later.") # type: ignore
+            return
+        articles = data.get("articles", [])
+        if not articles:
+            await update.message.reply_text("No news found.") # type: ignore
+            return
+        news_text = "📰 Latest World News:\n\n"
+        for i, article in enumerate(articles, 1):
+            title = article.get("title", "No title")
+            url = article.get("url", "")
+            news_text += f"{i}. {title}\n{url}\n\n"
+        await update.message.reply_text(news_text) # type: ignore
+    except Exception as e:
+        await update.message.reply_text(f"❗️Error fetching news: {e}") # type: ignore
+
 # Register commands in the application
 def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("start", start_command))
@@ -227,3 +251,4 @@ def register_command_handlers(app: Application):
     app.add_handler(CommandHandler("setpref", setpref_command))
     app.add_handler(CommandHandler("getpref", getpref_command))
     app.add_handler(CommandHandler("history", history_command))
+    app.add_handler(CommandHandler("news", news_command))
