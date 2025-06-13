@@ -1,6 +1,6 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CommandHandler, ContextTypes, Application
-from config.settings import FIREWORKS_API_KEY
+from config.settings import FIREWORKS_API_KEY, NEWS_API_KEY
 import json
 import requests
 import re
@@ -216,7 +216,6 @@ async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send latest world news headlines to the user."""
-    NEWS_API_KEY = "demo"  # Replace with your NewsAPI key for production
     url = f"https://newsapi.org/v2/top-headlines?language=en&pageSize=5&apiKey={NEWS_API_KEY}"
     try:
         response = requests.get(url)
