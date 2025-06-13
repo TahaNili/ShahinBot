@@ -219,11 +219,11 @@ async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     url = f"https://newsapi.org/v2/top-headlines?language=en&pageSize=5&apiKey={NEWS_API_KEY}"
     try:
         response = requests.get(url)
-        print("وضعیت HTTP:", response.status_code)
+        print("status HTTP:", response.status_code)
         data = response.json()
-        print("پاسخ NewsAPI:", data)
+        print("answer NewsAPI:", data)
         if data.get("status") != "ok":
-            error_message = data.get("message", "خطای ناشناخته")
+            error_message = data.get("message", "Unknown error")
             await update.message.reply_text(f"❗️دریافت اخبار ممکن نشد. پیام خطا: {error_message}") # type: ignore
             return
         articles = data.get("articles", [])
