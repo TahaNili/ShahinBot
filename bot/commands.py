@@ -215,26 +215,30 @@ async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"🕑 ۱۰ پیام آخر شما:\n\n{text}") # type: ignore
 
 async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Send latest world news headlines to the user."""
+    """ارسال آخرین اخبار جهان به کاربر با دیباگ فارسی"""
     url = f"https://newsapi.org/v2/top-headlines?language=en&pageSize=5&apiKey={NEWS_API_KEY}"
     try:
         response = requests.get(url)
+        print("وضعیت HTTP:", response.status_code)
         data = response.json()
+        print("پاسخ NewsAPI:", data)
         if data.get("status") != "ok":
-            await update.message.reply_text("❗️Could not fetch news. Try again later.") # type: ignore
+            error_message = data.get("message", "خطای ناشناخته")
+            await update.message.reply_text(f"❗️دریافت اخبار ممکن نشد. پیام خطا: {error_message}") # type: ignore
             return
         articles = data.get("articles", [])
         if not articles:
-            await update.message.reply_text("No news found.") # type: ignore
+            await update.message.reply_text("هیچ خبری پیدا نشد.") # type: ignore
             return
-        news_text = "📰 Latest World News:\n\n"
+        news_text = "📰 آخرین اخبار جهان:\n\n"
         for i, article in enumerate(articles, 1):
-            title = article.get("title", "No title")
+            title = article.get("title", "بدون عنوان")
             url = article.get("url", "")
             news_text += f"{i}. {title}\n{url}\n\n"
         await update.message.reply_text(news_text) # type: ignore
     except Exception as e:
-        await update.message.reply_text(f"❗️Error fetching news: {e}") # type: ignore
+        await update.message.reply_text(f"❗️خطا در دریافت اخبار: {e}") # type: ignore
+        print("News command error:", e)
 
 # Register commands in the application
 def register_command_handlers(app: Application):
