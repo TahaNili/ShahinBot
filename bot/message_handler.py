@@ -6,9 +6,6 @@ from telegram.ext import MessageHandler, ContextTypes, filters, Application, Com
 from datetime import datetime
 from bot.database import add_message, get_context, trim_old_messages, get_user_personality, set_user_personality, get_last_action, set_last_action
 import aiohttp
-from bot.voice_utils import speech_to_text, text_to_speech, ogg_to_wav
-import tempfile
-import os
 
 # Conversation memory for each chat
 user_memory = {}
@@ -258,72 +255,6 @@ async def set_style(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_memory[user_id]["style"] = style
     await update.message.reply_text(f"✅ لحن شما به «{style}» تغییر یافت.") # type: ignore
 
-async def handle_voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message or not update.message.voice:
-        return
-    user_id = update.message.from_user.id if update.message.from_user else None
-    if not user_id:
-        return
-    voice = update.message.voice
-    file = await context.bot.get_file(voice.file_id)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".ogg") as temp_ogg:
-        await file.download_to_drive(temp_ogg.name)
-        ogg_path = temp_ogg.name
-    # تبدیل ogg به wav
-    wav_path = ogg_to_wav(ogg_path)
-    # تبدیل ویس به متن
-    try:
-        user_message = speech_to_text(wav_path)
-    except Exception as e:
-        await update.message.reply_text("❗ خطا در تبدیل ویس به متن: {}".format(e))
-        return
-    # ادامه پردازش مثل پیام متنی
-    add_message(user_id, "user", user_message)
-    style = get_user_personality(user_id)
-    context_messages = get_context(user_id, limit=10)
-    trim_old_messages(user_id, max_messages=20)
-    if style == "formal":
-        system_prompt = "تو باید با لحنی رسمی و مودبانه پاسخ بدهی."
-    elif style == "academic":
-        system_prompt = "تو باید با لحن علمی و دقیق پاسخ بدهی."
-    elif style == "sarcastic":
-        system_prompt = "تو باید با لحن طنز و کنایه‌آمیز پاسخ بدهی."
-    else:
-        system_prompt = system_message["content"]
-    system_msg = {"role": "system", "content": system_prompt}
-    messages = [system_msg] + context_messages + [{"role": "user", "content": user_message}]
-    payload = {
-        "model": "accounts/fireworks/models/llama4-maverick-instruct-basic",
-        "max_tokens": 1024,
-        "top_p": 1,
-        "top_k": 40,
-        "presence_penalty": 0,
-        "frequency_penalty": 0,
-        "temperature": 0.6,
-        "messages": messages
-    }
-    headers = {
-        "Authorization": f"Bearer {FIREWORKS_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers, json=payload) as resp:
-                data = await resp.json()
-                reply = data["choices"][0]["message"]["content"].strip()
-    except Exception as e:
-        reply = "❗ مشکلی در پاسخ‌دهی پیش آمد."
-    add_message(user_id, "assistant", reply)
-    # تبدیل پاسخ به ویس
-    try:
-        tts_path = text_to_speech(reply, lang="fa")
-        with open(tts_path, "rb") as audio_file:
-            await update.message.reply_voice(voice=audio_file)
-        os.remove(tts_path)
-    except Exception as e:
-        await update.message.reply_text(reply)
-
 # Register message handler
 def register_message_handlers(app: Application):
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_text_message))
-    app.add_handler(MessageHandler(filters.VOICE, handle_voice_message))
